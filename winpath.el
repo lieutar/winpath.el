@@ -25,13 +25,16 @@
 ;;; Code:
 
 
-(defconst winpath:file-name-regexp "^\\(.*?/\\)?\\([a-zA-Z]\\):\\(/.*\\)" )
+(defconst winpath:file-name-regexp
+  "^\\(.*?/\\)?\\([a-zA-Z]\\):\\([/\\\\].*\\)" )
 
 (defun winpath:cygwin-name (path)
   (if (string-match winpath:file-name-regexp path)
       (format "/cygdrive/%s%s" 
               (match-string 2 path)
-              (match-string 3 path))
+              (replace-regexp-in-string
+               "\\\\" "/"
+               (match-string 3 path)))
     path))
 
 (defun winpath:file-name-handler (operation &rest args)
